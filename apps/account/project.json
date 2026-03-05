@@ -1,7 +1,7 @@
 {
-  "name": "school",
+  "name": "account",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/school/src",
+  "sourceRoot": "apps/account/src",
   "projectType": "application",
   "tags": [],
   "targets": {
@@ -10,7 +10,7 @@
       "options": {
         "command": "webpack-cli build",
         "args": ["--node-env=production"],
-        "cwd": "apps/school"
+        "cwd": "apps/account"
       },
       "configurations": {
         "development": {
@@ -23,8 +23,8 @@
       "cache": true,
       "executor": "@nx/js:prune-lockfile",
       "outputs": [
-        "{workspaceRoot}/dist/apps/school/package.json",
-        "{workspaceRoot}/dist/apps/school/package-lock.json"
+        "{workspaceRoot}/dist/apps/account/package.json",
+        "{workspaceRoot}/dist/apps/account/package-lock.json"
       ],
       "options": {
         "buildTarget": "build"
@@ -33,7 +33,7 @@
     "copy-workspace-modules": {
       "dependsOn": ["build"],
       "cache": true,
-      "outputs": ["{workspaceRoot}/dist/apps/school/workspace_modules"],
+      "outputs": ["{workspaceRoot}/dist/apps/account/workspace_modules"],
       "executor": "@nx/js:copy-workspace-modules",
       "options": {
         "buildTarget": "build"
@@ -49,15 +49,15 @@
       "defaultConfiguration": "development",
       "dependsOn": ["build"],
       "options": {
-        "buildTarget": "school:build",
+        "buildTarget": "account:build",
         "runBuildTargetDependencies": false
       },
       "configurations": {
         "development": {
-          "buildTarget": "school:build:development"
+          "buildTarget": "account:build:development"
         },
         "production": {
-          "buildTarget": "school:build:production"
+          "buildTarget": "account:build:production"
         }
       }
     }
