@@ -1,6 +1,6 @@
 import { IUser, UserRole } from '@school/interfaces';
 import { Types } from 'mongoose';
-import { genSalt, hash, compare } from 'bcrypt';
+import { genSalt, hash, compare } from 'bcryptjs';
 
 export class UserEntity implements IUser {
   _id?: Types.ObjectId;
