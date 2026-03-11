@@ -1,26 +1,54 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { RegisterDto } from './auth.controller';
+import { UserRepository } from '../user/repositories/user. repository';
+import { UserEntity } from '../user/entities/user.entity';
+import { UserRole } from '@school/interfaces';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async register({ email, password, displayName }: RegisterDto) {
+    const oldUser = await this.userRepository.findUser(email);
+
+    if (oldUser) {
+      throw new Error('User already exists');
+    }
+
+    const newUserEntity = await new UserEntity({
+      displayName,
+      email,
+      role: UserRole.STUDENT,
+    }).setPassword(password);
+
+    const newUser = await this.userRepository.createUser(newUserEntity);
+    return { email: newUser.email };
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async validateUser(email: string, password: string) {
+    const user = await this.userRepository.findUser(email);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const userEntity = new UserEntity(user);
+    const isValidPassword = await userEntity.validatePassword(password);
+
+    if (!isValidPassword) {
+      throw new Error('Invalid password');
+    }
+
+    return { id: user._id.toHexString() };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  async login(id: string) {
+    return {
+      access_token: await this.jwtService.signAsync({ id }),
+    };
   }
 }
